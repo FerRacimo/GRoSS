@@ -7,3 +7,4 @@ Eventually I'll publish a paper on this statistic, but in case you want to use i
 
 Racimo, F., Berg, J. J., & Pickrell, J. K. (2018). Detecting polygenic adaptation in admixture graphs. Genetics, genetics-300489.
 
+Special acknowledgments to Jeremy Berg who was the original mastermind behind the Q<sub>B</sub> statistic.
