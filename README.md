@@ -13,7 +13,7 @@ Special acknowledgments to Jeremy Berg who was the original mastermind behind th
 
 # Examples
 
-As a visual example of what GRoSS can do, here are two graphs and their corresponding R<sub>B</sub> statistics computed across the genome. The first graph was made using populations from the 1000 Genomes Project Phase 3. The second graph was made using populations from Lazaridis et al. (2014), after imputation the 1000 Genomes data.
+As a visual example of what GRoSS can do, here are two graphs and their corresponding R<sub>B</sub> statistics computed across the genome. The first graph was made using populations from the 1000 Genomes Project Phase 3. The second graph was made using populations from Lazaridis et al. (2014), after imputation on the 1000 Genomes data.
 
 
 
