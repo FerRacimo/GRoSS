@@ -19,12 +19,15 @@ As a visual example of what GRoSS can do, here are two graphs and their correspo
 
 # Running GRoSS
 
-Here are two example lines for generating the above results. The main R script is RunMultiBranch.R and it requires an input file (\*txt) and another R script that specifies the graph using the admixturegraph package (Leppälä et al. 2017):
+Here are two example lines for generating the above results. The main R script is RunMultiBranch.R and it requires the user to specify:
+- an input file (\*txt) specified with the -e option
+- another R script that specifies the graph using the admixturegraph package (Leppälä et al. 2017), specified with the -r option
+- an output file on which to write the results, specified with the -o option
 
-1000 Genomes scan:
+1000 Genomes scan example:
 
 Rscript RunMultiBranch.R -e KG_popfile.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.R -o SNPstat_1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.tsv
 
-Lazaridis et al. scan:
+Lazaridis et al. scan example:
 
 Rscript RunMultiBranch.R -e LazCombo_popfile.txt -r LAZ_Mandenka_Yoruba_Oceanian_EastAsian_NativeAmerican_Sardinian_EuropeA.R -o SNPstat_LAZ_Mandenka_Yoruba_Oceanian_EastAsian_NativeAmerican_Sardinian_EuropeA.tsv
