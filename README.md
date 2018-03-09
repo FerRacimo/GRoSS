@@ -31,3 +31,5 @@ Rscript RunMultiBranch.R -e KG_popfile.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.R 
 Lazaridis et al. scan example:
 
 Rscript RunMultiBranch.R -e LazCombo_popfile.txt -r LAZ_Mandenka_Yoruba_Oceanian_EastAsian_NativeAmerican_Sardinian_EuropeA.R -o SNPstat_LAZ_Mandenka_Yoruba_Oceanian_EastAsian_NativeAmerican_Sardinian_EuropeA.tsv
+
+The output contains the chi-squared statistics and the corresponding p-values for each branch of the admixture graph.
