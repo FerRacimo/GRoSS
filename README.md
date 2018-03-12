@@ -25,7 +25,7 @@ As a visual example of what GRoSS can do, here are two graphs showing -log10(p-v
 
 # Running GRoSS
 
-Here is an example lines for generating the above results. The main R script is RunMultiBranch.R and it requires the user to specify:
+Here is an example line for generating the above results. The main R script is RunMultiBranch.R and it requires the user to specify:
 - an input file (\*txt) specified with the -e option
 - another R script that specifies the graph using the admixturegraph package (Leppälä et al. 2017), specified with the -r option
 - an output file on which to write the results, specified with the -o option
