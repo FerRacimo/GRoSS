@@ -25,18 +25,18 @@ As a visual example of what GRoSS can do, here are two graphs showing -log10(p-v
 
 # Running GRoSS
 
-Here are two example lines for generating the above results. The main R script is RunMultiBranch.R and it requires the user to specify:
+Here is an example lines for generating the above results. The main R script is RunMultiBranch.R and it requires the user to specify:
 - an input file (\*txt) specified with the -e option
 - another R script that specifies the graph using the admixturegraph package (Leppälä et al. 2017), specified with the -r option
 - an output file on which to write the results, specified with the -o option
 
-1000 Genomes scan example:
+We will use the same 1000 Genomes populations as in the example above, but limiting ourselves to chr22. First, unpack the input file KG_popfile_chr22.txt.gz.
 
-Rscript RunMultiBranch.R -e KG_popfile.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.R -o SNPstat_1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.tsv
+gzip -c KG_popfile_chr22.txt.gz > KG_popfile_chr22.txt
 
-Lazaridis et al. scan example:
+Then, run the program:
 
-Rscript RunMultiBranch.R -e LazCombo_popfile.txt -r LAZ_Mandenka_Yoruba_Oceanian_EastAsian_NativeAmerican_Sardinian_EuropeA.R -o SNPstat_LAZ_Mandenka_Yoruba_Oceanian_EastAsian_NativeAmerican_Sardinian_EuropeA.tsv
+Rscript RunMultiBranch.R -e KG_popfile_chr22.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.R -o SNPstat_1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB_chr22.tsv
 
 The output contains the chi-squared statistics and the corresponding p-values for each branch of the admixture graph.
 
