@@ -32,9 +32,6 @@ neutfile <- opt$neutfile
 graphfile <- opt$graphfile
 outfile <- opt$outfile
 
-# Default (before going through graphfile)
-pvaltotal <- 0.05 
-
 # Load graph file
 source(graphfile)
 

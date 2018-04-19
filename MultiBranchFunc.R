@@ -1,10 +1,132 @@
-library("admixturegraph")
-library("msm")
-library("reshape2")
+suppressMessages(library("admixturegraph"))
+suppressMessages(library("msm"))
+suppressMessages(library("reshape2"))
 suppressMessages(library("pscl"))
-library("parallel")
-library("ggplot2")
-library("gridExtra")
+suppressMessages(library("parallel"))
+suppressMessages(library("ggplot2"))
+suppressMessages(library("gridExtra"))
+suppressMessages(library(qqman))
+suppressMessages(library(data.table))
+suppressMessages(library("ggplot2"))
+suppressMessages(library("parallel"))
+
+suppressMessages(library(IRanges))
+suppressMessages(library(biomaRt))
+
+# Function to melt table
+MeltTab <- function(finaltab){
+CHR <- finaltab[,1]
+START <- as.numeric(as.character(finaltab[,2]))
+END <- as.numeric(as.character(finaltab[,3]))
+MIDPOINT <- (START+END)/2
+newtab <- finaltab[,seq(4,dim(finaltab)[2])]
+newtab <- newtab[,seq(dim(newtab)[2]/2+1,dim(newtab)[2])]
+POS <- seq(1,dim(newtab)[1])
+newtab <- apply(newtab,2,as.numeric)
+melttab <- melt(newtab)
+melttab$value <- -log10(melttab$value)
+melttab <- cbind(melttab[,c(2,3)], POS,CHR,START,END)
+melttab[,1] <- factor(melttab[,1])
+names(melttab) <- c("Branches","Pvals","SNPID","CHR","START","END")
+melttab <- melttab[order(melttab$Pvals,decreasing=TRUE),]
+return(melttab)
+}
+
+# Function to select and collapse top regions
+CompressTab <- function(tab,extend,padding){
+finaltab <- c()
+branches <- unique(tab$Branches)
+for(branch in branches){
+branchtab <- tab[which(tab$Branches == branch),]
+# Collapse overlapping regions
+branch <- as.character(branchtab$Branches[1])
+start <- branchtab$START - extend - padding
+stop <- branchtab$END + extend + padding
+chrom <- branchtab$CHR
+score <- branchtab$Pvals
+my.df <- data.frame(chrom=chrom,start=start,stop=stop,score=score)
+DT <- as.data.table(my.df)
+DT[,group := { 
+      ir <-  IRanges(start, stop);
+       subjectHits(findOverlaps(ir, reduce(ir)))
+      },by=chrom]
+collapsed <- DT[, list(start=min(start),stop=max(stop),chrom=unique(chrom),score=max(score)),by=list(group,chrom)]
+# Remove padding
+compressedtab <- cbind(rep(branch,length(collapsed$chrom)),collapsed$chrom,collapsed$start+padding,collapsed$stop-padding,collapsed$score)
+finaltab <- rbind(finaltab,compressedtab) 
+}
+colnames(finaltab) <- c("Branches","CHR","START","END","MAXSCORE")
+return(finaltab)
+}
+
+# Function to annotate top windows with gene names
+AnnotateRegions <- function(tab,hostname,datasetname,genetype="hgnc"){
+tab <- as.data.table(tab)
+ensembl = useEnsembl(host=hostname,biomart="ensembl", dataset=datasetname)
+genevec <- sapply(seq(1,dim(tab)[1]), function(i){
+genes <- getBM(attributes=c('ensembl_gene_id','gene_biotype','hgnc_symbol','chromosome_name','start_position','end_position'), filters = c('chromosome_name','start','end'), values = as.list(tab[i,c(2,3,4)]), mart = ensembl)
+genes <- genes[which(genes$gene_biotype == "protein_coding"),]
+if(genetype == "hgnc"){genes <- genes$hgnc_symbol } else if(genetype == "ensembl"){genes <- genes$ensembl_gene_id}
+genes <- genes[which(genes != "")]
+return(paste(genes,collapse=","))
+})
+newtab <- cbind(tab,genevec)
+colnames(newtab) <- c("Branches","CHR","START","END","SCORE","Genes")
+newtab[,5] <- round(as.numeric(unlist(newtab[,5])),3)
+newtab[,6][which(newtab[,6] == "")] <- "N/A"
+newtab[,1] <- sapply(unlist(newtab[,1]),function(x){paste(strsplit(x,"_")[[1]][-1],collapse="-")})
+newtab <- newtab[order(newtab$SCORE,decreasing=TRUE),]
+return(newtab)
+}
+
+# Function to sort genes for ontology analysis
+GetSortedGenes <- function(melttab,hostname,datasetname,corenum,maxormean){
+ensembl = useEnsembl(host=hostname,biomart="ensembl", dataset=datasetname)
+allgenes <- getBM(attributes=c('ensembl_gene_id','gene_biotype','hgnc_symbol','chromosome_name','start_position','end_position'), mart = ensembl)
+allgenes <- allgenes[which(allgenes[,2] == "protein_coding" & allgenes[,3] != "" &  allgenes[,4] %in% c("X","Y",seq(1,22)) ),]
+duplicates <- which(duplicated(allgenes[,3]))
+allgenes <- allgenes[-duplicates,]
+allsorted <- mclapply(levels(melttab[,1]),function(branch){
+print(branch)
+branchtab <- melttab[which(melttab[,1] == branch),]
+allscores <- apply(allgenes,1,function(gene){
+genechr <- as.character(gene[4])
+genestart <- as.numeric(gene[5])
+geneend <- as.numeric(gene[6])
+winchr <- branchtab[,4]
+winstart <- branchtab[,5] 
+winend <- branchtab[,6]
+overlapwin <- which(winchr == genechr &
+(winstart <= genestart & winend >= genestart ) |
+(winstart >= genestart & winend <= geneend ) |
+(winstart <= geneend & winend >= geneend)
+)
+if(maxormean == "max"){ if(length(overlapwin) == 0){score <- NA } else{ score <- max(branchtab[overlapwin,2],na.rm=TRUE)} } else {
+if(length(overlapwin) == 0){score <- NA } else{ score <- mean(branchtab[overlapwin,2],na.rm=TRUE)} }
+return(score)
+})
+sortedgenes <- cbind(allgenes[,3],allscores)
+sortedgenes <- sortedgenes[order(as.numeric(sortedgenes[,2]),decreasing=TRUE),]
+return(sortedgenes)
+},mc.cores=corenum)
+names(allsorted) <- levels(melttab[,1])
+return(allsorted)
+}
+
+
+# Get test sites for gene ontology analysis
+GetTestSites <- function(melttab,pvalcutoff,corenum){
+alltestsnps <- mclapply(levels(melttab[,1]),function(branch){
+print(branch)
+branchtab <- melttab[which(melttab[,1] == branch),]
+testsnps <- branchtab[which(branchtab[,2] > pvalcutoff),]
+testsnps <- cbind(testsnps[,4],round((testsnps[,5]+testsnps[,6])/2))
+return(testsnps)
+},mc.cores=corenum)
+names(alltestsnps) <- levels(melttab[,1])
+return(alltestsnps)
+}
+
 
 # Function for breakin graph into component pieces (from admixture graph package)
 break_graph <- function(graph) {
@@ -594,7 +716,7 @@ ChiSquaredReduced <- function(graphedges,contribmat,Fmat,leaves_freqs,effects,to
 
   branchorder <- apply(graphedges,1,function(x){paste(as.character(x[1]),as.character(x[2]),sep="_")})
   Qteststat <- Qteststat[branchorder]
-  Pval <- 1 - pchisq(Qteststat,1)
+  Pval <- max( 1.110223e-16, 1 - pchisq(Qteststat,1))
   qteststat <- qteststat[branchorder]
   allstats <- cbind(Qteststat,qteststat,Pval)
 
@@ -607,7 +729,7 @@ ChiSquaredReduced <- function(graphedges,contribmat,Fmat,leaves_freqs,effects,to
     denominator <- varmean
     Qteststat <- numerator / denominator
 
-    Pval <- 1 - pchisq(Qteststat,qr(Fmat)$rank)
+    Pval <-  max( 1.110223e-16, 1 - pchisq(Qteststat,qr(Fmat)$rank))
     allstats <- c(Qteststat,NaN,Pval)
   }
 
@@ -659,7 +781,7 @@ ComputeWinRB <- function(branchorder,contribmat,Fmat,freqs){
   teststat <- teststat[branchorder]
 
 
-  Pval <- 1 - pchisq(teststat,1)
+  Pval <-  max( 1.110223e-16, 1 - pchisq(teststat,1))
   names(Pval) <- paste("Pval_",names(teststat),sep="")
 
   return(c(teststat,Pval))

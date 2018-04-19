@@ -18,6 +18,7 @@ if(exists("neutfile")){
   print("Computing F matrix...")
   fcutoff <- 0.01
   checksegneut <- which( apply(neut_leaves_freqs,1,sum)/dim(neut_leaves_freqs)[2] < (1 - fcutoff)  & apply(neut_leaves_freqs,1,sum)/dim(neut_leaves_freqs)[2] > fcutoff )
+  #print(checksegneut)
   neut_leaves_freqs <- neut_leaves_freqs[checksegneut,]
   neut_leaves_freqs_means <- apply(neut_leaves_freqs, 1, mean)	
   mean_hetero <- neut_leaves_freqs_means*(1-neut_leaves_freqs_means)
@@ -29,6 +30,7 @@ if(exists("neutfile")){
        })
   colnames(Fmat) <- colnames(neut_leaves_freqs)
   rownames(Fmat) <- colnames(neut_leaves_freqs)
+  #print(Fmat)
 
   # Compute contributions of each branch to each leaf
   contribmat <- c()
@@ -61,7 +63,6 @@ if(exists("neutfile")){
     setfreqs <- neut_leaves_freqs[chrset,]
 
     numSNPs <- dim(setfreqs)[1]
-    #numSNPs <- 200
 
     winsize <- 1
     winshift <- 1
@@ -75,6 +76,7 @@ if(exists("neutfile")){
     #print(c(x,x+(winsize-1)))
     SNPs <- seq(x,x+(winsize-1),1)
     freqs <- setfreqs[SNPs,]
+    #print(freqs)	
     stats <- ComputeWinRB(branchorder,contribmat,Fmat,freqs)
     return(stats)
     } ))
