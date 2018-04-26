@@ -14,6 +14,25 @@ Special acknowledgments to Jeremy Berg who was the original mastermind behind th
 
 Lee, K. M., & Coop, G. (2017). Distinguishing among modes of convergent adaptation using population genomic data. Genetics, 207(4), 1591-1619.
 
+# Required R Libraries
+
+- admixturegraph
+- msm
+- reshape2
+- pscl
+- parallel
+- ggplot2
+- gridExtra
+- qqman
+- data.table
+- ggplot2
+- parallel
+- devtools
+- graphparse: https://github.com/mailund/graphparse
+- matchbox: https://github.com/mailund/matchbox
+- minilexer: https://coolbutuseless.bitbucket.io/tags/minilexer/
+
+
 # Examples
 
 As a visual example of what GRoSS can do, here are two graphs showing -log10(p-values) for the S<sub>B</sub> statistic computed on SNPs along the genome. The first graph was made using populations from the 1000 Genomes Project Phase 3. The second graph was made using populations from Lazaridis et al. (2014), after imputation on the 1000 Genomes data.
