@@ -25,7 +25,6 @@ Lee, K. M., & Coop, G. (2017). Distinguishing among modes of convergent adaptati
 - gridExtra
 - qqman
 - data.table
-- ggplot2
 - parallel
 - devtools
 - graphparse: https://github.com/mailund/graphparse
