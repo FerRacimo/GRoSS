@@ -27,6 +27,7 @@ Lee, K. M., & Coop, G. (2017). Distinguishing among modes of convergent adaptati
 - data.table
 - parallel
 - devtools
+- readr
 - graphparse: https://github.com/mailund/graphparse
 - matchbox: https://github.com/mailund/matchbox
 - minilexer: https://coolbutuseless.bitbucket.io/tags/minilexer/
