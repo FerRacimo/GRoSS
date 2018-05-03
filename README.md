@@ -45,10 +45,11 @@ As a visual example of what GRoSS can do, here are two graphs showing -log10(p-v
 # Running GRoSS
 
 Here is an example line for generating the above results. The main R script is RunMultiBranch.R and it requires the user to specify:
-- 1) an input file (\*txt) specified with the -e option
-- 2a) a graph file describing the topology of the graph, specified with the -r option. This can be in the same format as the graph file that is used as input for qpGraph (Patterson et al. 2012). Note that the value of the fitted admixture weights must be correctly specified.
-- 2b) alternatively to 2.a), one can instead specify a dotfile (outputted from qpGraph after fitting) with the -d option 
-- 3) an output file on which to write the results, specified with the -o option
+- an input file (\*txt) specified with the -e option
+- a graph file describing the topology of the graph. This can be:
+  * in the same format as the graph file that is used as input for qpGraph (Patterson et al. 2012). Note that the value of the fitted admixture weights must be correctly specified, specific with the -r option OR
+  * in dotfile format (outputted from qpGraph after fitting), specified with the -d option 
+- an output file on which to write the results, specified with the -o option
 
 We will use the same 1000 Genomes populations as in the example above, but limiting ourselves to chr22. First, unpack the input file KG_popfile_chr22.txt.gz.
 
