@@ -1,7 +1,36 @@
+# Define standard admixture graph
+print("Loading graph topology")
+pregraph <- readr::read_file(graphfile)
+graph <- graphparse::read_qpgraph(pregraph)
+vecadm <- attr(graph, "admixture_proportions")
+admvalues <- cbind(names(vecadm),matrix(vecadm))
+leaves <- graph$leaves
+inner_nodes <- graph$inner_nodes
+edges <- sapply(c(leaves,inner_nodes), function(x){get_edges(graph, x)})
+edges <- matrix(unlist(edges),byrow=TRUE,ncol=2)
+
+
+if(length(admvalues) > 0){
+  colnames(admvalues) <- c("ratename","rate")
+  admvalues <- as.data.frame(admvalues)
+  admvalues[,2] <- as.numeric(as.character(admvalues[,2]))
+}
+
+edgevalues <- unique(cbind(edges,1))
+colnames(edgevalues) <- c("child","parent","value")
+rownames(edgevalues) <- c()
+edgevalues <- as.data.frame(edgevalues)
+edgevalues[,3] <- as.numeric(as.character(edgevalues[,3]))
+supergraph <- list(graph,edgevalues,admvalues)
+
+# Order edges topologically
+supergraph <- OrderBranches(supergraph)
+
 
 if(exists("neutfile")){
     
   # Load Neutral data
+  print("Loading SNP data")
   neutfilename <- neutfile
   neutdata <- LoadCounts(neutfilename, leaves)
   firstfreqcol <- 4

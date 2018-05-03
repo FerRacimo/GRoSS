@@ -33,6 +33,6 @@ graphfile <- opt$graphfile
 outfile <- opt$outfile
 
 # Load graph file
-source(graphfile)
+source("LoadFiles.R")
 
 

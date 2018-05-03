@@ -3,12 +3,15 @@ suppressMessages(library("msm"))
 suppressMessages(library("reshape2"))
 suppressMessages(library("pscl"))
 suppressMessages(library("parallel"))
-suppressMessages(library("ggplot2"))
 suppressMessages(library("gridExtra"))
 suppressMessages(library(qqman))
 suppressMessages(library(data.table))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("parallel"))
+suppressMessages(library("readr"))
+suppressMessages(library("graphparse"))
+suppressMessages(library("matchbox"))
+suppressMessages(library("minilexer"))
 
 suppressMessages(library(IRanges))
 suppressMessages(library(biomaRt))
@@ -60,20 +63,28 @@ return(finaltab)
 }
 
 # Function to annotate top windows with gene names
-AnnotateRegions <- function(tab,hostname,datasetname,genetype="hgnc"){
+AnnotateRegions <- function(tab,hostname,datasetname,padding=0){
+oldtab <- tab
+tab[,3] <- as.numeric(tab[,3]) - padding
+tab[,4] <- as.numeric(tab[,4]) + padding
 tab <- as.data.table(tab)
-ensembl = useEnsembl(host=hostname,biomart="ensembl", dataset=datasetname)
+oldtab <- as.data.table(oldtab)
+enscall = useEnsembl(host=hostname,biomart="ensembl", dataset=datasetname)
 genevec <- sapply(seq(1,dim(tab)[1]), function(i){
-genes <- getBM(attributes=c('ensembl_gene_id','gene_biotype','hgnc_symbol','chromosome_name','start_position','end_position'), filters = c('chromosome_name','start','end'), values = as.list(tab[i,c(2,3,4)]), mart = ensembl)
+genes <- getBM(attributes=c('ensembl_gene_id','gene_biotype','hgnc_symbol','chromosome_name','start_position','end_position'), filters = c('chromosome_name','start','end'), values = as.list(tab[i,c(2,3,4)]), mart = enscall)
 genes <- genes[which(genes$gene_biotype == "protein_coding"),]
-if(genetype == "hgnc"){genes <- genes$hgnc_symbol } else if(genetype == "ensembl"){genes <- genes$ensembl_gene_id}
-genes <- genes[which(genes != "")]
-return(paste(genes,collapse=","))
+ensembl <- genes$ensembl_gene_id
+hgnc <- genes$hgnc_symbol
+ensembl <- ensembl[which(ensembl != "")]
+hgnc <- hgnc[which(hgnc != "")]
+final <- c( paste(ensembl,collapse=","), paste(hgnc,collapse=",") )
+return(final)
 })
-newtab <- cbind(tab,genevec)
-colnames(newtab) <- c("Branches","CHR","START","END","SCORE","Genes")
+newtab <- cbind(oldtab,t(genevec))
+colnames(newtab) <- c("Branches","CHR","START","END","SCORE","Ensembl","HGNC")
 newtab[,5] <- round(as.numeric(unlist(newtab[,5])),3)
 newtab[,6][which(newtab[,6] == "")] <- "N/A"
+newtab[,7][which(newtab[,7] == "")] <- "N/A"
 newtab[,1] <- sapply(unlist(newtab[,1]),function(x){paste(strsplit(x,"_")[[1]][-1],collapse="-")})
 newtab <- newtab[order(newtab$SCORE,decreasing=TRUE),]
 return(newtab)
@@ -743,7 +754,7 @@ ChiSquaredReduced <- function(graphedges,contribmat,Fmat,leaves_freqs,effects,to
 ComputeWinRB <- function(branchorder,contribmat,Fmat,freqs){
 
   contribmat <- contribmat[,colnames(Fmat)]
-  
+
   if( is.null(dim(freqs)) ){
     freqs <- freqs[colnames(Fmat)]
     ancfreqs <- mean(freqs)
@@ -777,12 +788,22 @@ ComputeWinRB <- function(branchorder,contribmat,Fmat,freqs){
     return(final)
   } )
 
-
   teststat <- teststat[branchorder]
 
+  Pval <- sapply( teststat, function(y){ max( 1.110223e-16, 1 - pchisq(y,1)) })
 
-  Pval <-  max( 1.110223e-16, 1 - pchisq(teststat,1))
   names(Pval) <- paste("Pval_",names(teststat),sep="")
 
   return(c(teststat,Pval))
 }
+
+
+get_edges <- function(g, node_name) {
+incidence_vector <- g$parents[node_name,]
+parents <- names(incidence_vector)[which(incidence_vector == TRUE)]
+if(length(parents) == 0){ return()
+} else if(length(parents) == 1){ return(c(node_name,parents))
+} else if(length(parents) > 1){ return( rbind( rep(node_name,length(parents)) ,parents)  ) }
+}
+
+

@@ -1,0 +1,21 @@
+root	r
+label	CEU	CEU
+label	TSI	TSI
+label	CHB	CHB
+label	JPT	JPT
+label	CDX	CDX
+label	MSL	MSL
+label	ESN	ESN
+edge	v_CEU	v	CEU
+edge	v_TSI	v	TSI
+edge	q_v	q	v
+edge	u_CHB	u	CHB
+edge	u_JPT	u	JPT
+edge	t_u	t	u
+edge	t_CDX	t	CDX
+edge	q_t	q	t
+edge	r_q	r	q
+edge	r_s	r	s
+edge	s_MSL	s	MSL
+edge	s_ESN	s	ESN
+
