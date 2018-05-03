@@ -1,14 +1,13 @@
 # Define standard admixture graph
 print("Loading graph topology")
-pregraph <- readr::read_file(graphfile)
-graph <- graphparse::read_qpgraph(pregraph)
+if(is.null(dotfile)){ pregraph <- readr::read_file(graphfile); graph <- graphparse::read_qpgraph(pregraph)
+} else { pregraph <- readr::read_file(dotfile); graph <- graphparse::read_dot(pregraph) }
 vecadm <- attr(graph, "admixture_proportions")
 admvalues <- cbind(names(vecadm),matrix(vecadm))
 leaves <- graph$leaves
 inner_nodes <- graph$inner_nodes
 edges <- sapply(c(leaves,inner_nodes), function(x){get_edges(graph, x)})
 edges <- matrix(unlist(edges),byrow=TRUE,ncol=2)
-
 
 if(length(admvalues) > 0){
   colnames(admvalues) <- c("ratename","rate")
@@ -25,7 +24,6 @@ supergraph <- list(graph,edgevalues,admvalues)
 
 # Order edges topologically
 supergraph <- OrderBranches(supergraph)
-
 
 if(exists("neutfile")){
     

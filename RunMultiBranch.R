@@ -8,6 +8,7 @@ source("MultiBranchFunc.R")
 option_list = list(
   make_option(c("-e", "--neutfile"), type="character", default=NULL, help="Neutral input file name"),
   make_option(c("-r", "--graphfile"), type="character", default=NULL, help="Graph R file name"),
+  make_option(c("-d", "--dotfile"), type="character", default=NULL, help="Dot file name"),
   make_option(c("-o", "--outfile"), type="character", default=NULL, help="Output file")
 ); 
  
@@ -19,17 +20,19 @@ if (is.null(opt$neutfile)){
   print_help(opt_parser)
   stop("Neutral file name must be supplied.n", call.=FALSE)
 }
-if (is.null(opt$graphfile)){
-  print_help(opt_parser)
-  stop("Graph file name must be supplied.n", call.=FALSE)
-}
 if (is.null(opt$outfile)){
   print_help(opt_parser)
   stop("Output file name must be supplied.n", call.=FALSE)
 }
+if (is.null(opt$graphfile) & is.null(opt$dotfile)){
+  print_help(opt_parser)
+  stop("Graph file name must be supplied.n", call.=FALSE)
+}
+
 
 neutfile <- opt$neutfile
 graphfile <- opt$graphfile
+dotfile <- opt$dotfile
 outfile <- opt$outfile
 
 # Load graph file
