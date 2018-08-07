@@ -16,22 +16,23 @@ Lee, K. M., & Coop, G. (2017). Distinguishing among modes of convergent adaptati
 
 # Required R Libraries
 
-- admixturegraph
-- msm
-- reshape2
-- pscl
-- parallel
-- ggplot2
-- gridExtra
-- qqman
-- data.table
-- parallel
-- devtools
-- readr
-- graphparse: https://github.com/mailund/graphparse
-- matchbox: https://github.com/mailund/matchbox
-- minilexer: https://coolbutuseless.bitbucket.io/tags/minilexer/
-
+```
+R
+install.packages("msm")
+install.packages("reshape2")
+install.packages("pscl")
+install.packages("parallel")
+install.packages("data.table")
+install.packages("ggplot2")
+install.packages("gridExtra")
+install.packages("admixturegraph")
+install.packages("devtools")
+install.packages("readr")
+install.packages("qqman")
+devtools::install_bitbucket('coolbutuseless/minilexer')
+devtools::install_github("mailund/graphparse")
+devtools::install_github("mailund/matchbox")
+```
 
 # Examples
 
