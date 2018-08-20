@@ -48,7 +48,9 @@ Here is an example line for generating the above results. The main R script is R
 
 We will use the same 1000 Genomes populations as in the example above, but limiting ourselves to chr22. First, unpack the input file KG_popfile_chr22.txt.gz.
 
+```
 gzip -c KG_popfile_chr22.txt.gz > KG_popfile_chr22.txt
+```
 
 Then, run the program:
 
