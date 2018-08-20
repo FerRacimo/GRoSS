@@ -52,7 +52,9 @@ gzip -c KG_popfile_chr22.txt.gz > KG_popfile_chr22.txt
 
 Then, run the program:
 
+```
 Rscript RunMultiBranch.R -e KG_popfile_chr22.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.graph -o SNPstat_1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB_chr22.tsv
+```
 
 The output contains the chi-squared statistics and the corresponding p-values for each branch of the admixture graph.
 
