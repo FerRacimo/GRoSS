@@ -9,11 +9,6 @@ Racimo, F., Berg, J. J., & Pickrell, J. K. (2018). Detecting polygenic adaptatio
 
 Special acknowledgments to Jeremy Berg who was the original mastermind behind the Q<sub>B</sub> statistic.
 
-**NOTE**: The S<sub>B</sub> statistic is fast and easy to compute but is not as principled as other approaches for multi-population selection. For once, it doesn't rely on an explicit positive selection model, it just detects significant deviations from neutrality. For a more principled approach, see, for example:
-
-
-Lee, K. M., & Coop, G. (2017). Distinguishing among modes of convergent adaptation using population genomic data. Genetics, 207(4), 1591-1619.
-
 # Required R Libraries
 
 ```
