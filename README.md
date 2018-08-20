@@ -39,7 +39,7 @@ source("https://bioconductor.org/biocLite.R"); biocLite("biomaRt")
 
 As a visual example of what GRoSS can do, here are two graphs showing -log10(p-values) for the S<sub>B</sub> statistic computed on SNPs along the genome. The first graph was made using populations from the 1000 Genomes Project Phase 3. The second graph was made using populations from Lazaridis et al. (2014), after imputation on the 1000 Genomes data.
 
-<img src="https://github.com/FerRacimo/GRoSS/blob/master/Q_b_manhattan_human.png" height="500">
+<img src="https://github.com/FerRacimo/GRoSS/blob/master/Q_b_manhattan_human.png" height="800">
 
 
 # Running GRoSS
