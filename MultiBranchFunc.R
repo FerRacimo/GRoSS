@@ -45,20 +45,24 @@ branchtab <- tab[which(tab$Branches == branch),]
 branch <- as.character(branchtab$Branches[1])
 start <- branchtab$START - extend - padding
 stop <- branchtab$END + extend + padding
+pos <- round((branchtab$START + branchtab$END)/2)
 chrom <- branchtab$CHR
 score <- branchtab$Pvals
-my.df <- data.frame(chrom=chrom,start=start,stop=stop,score=score)
+my.df <- data.frame(chrom=chrom,start=start,stop=stop,pos=pos,score=score)
 DT <- as.data.table(my.df)
 DT[,group := { 
       ir <-  IRanges(start, stop);
        subjectHits(findOverlaps(ir, reduce(ir)))
       },by=chrom]
-collapsed <- DT[, list(start=min(start),stop=max(stop),chrom=unique(chrom),score=max(score)),by=list(group,chrom)]
+#collapsed <- DT[, list(start=min(start),stop=max(stop),chrom=unique(chrom),score=max(score)),by=list(group,chrom)]
+collapsed <- DT[, list( start=min(start),stop=max(stop),chrom=unique(chrom),score=max(score),bestsnp=pos[which( score == max(score) )] ),by=list(group,chrom)]
 # Remove padding
-compressedtab <- cbind(rep(branch,length(collapsed$chrom)),collapsed$chrom,collapsed$start+padding,collapsed$stop-padding,collapsed$score)
+#compressedtab <- cbind(rep(branch,length(collapsed$chrom)),as.character(collapsed$chrom),collapsed$start+padding,collapsed$stop-padding,collapsed$score)
+compressedtab <- cbind(rep(branch,length(collapsed$chrom)),as.character(collapsed$chrom),collapsed$start+padding,collapsed$stop-padding,collapsed$bestsnp,collapsed$score)
 finaltab <- rbind(finaltab,compressedtab) 
 }
-colnames(finaltab) <- c("Branches","CHR","START","END","MAXSCORE")
+#colnames(finaltab) <- c("Branches","CHR","START","END","MAXSCORE")
+colnames(finaltab) <- c("BRANCHES","CHR","START","END","BESTPOS","MAXSCORE")
 return(finaltab)
 }
 
@@ -81,10 +85,10 @@ final <- c( paste(ensembl,collapse=","), paste(hgnc,collapse=",") )
 return(final)
 })
 newtab <- cbind(oldtab,t(genevec))
-colnames(newtab) <- c("Branches","CHR","START","END","SCORE","Ensembl","HGNC")
-newtab[,5] <- round(as.numeric(unlist(newtab[,5])),3)
-newtab[,6][which(newtab[,6] == "")] <- "N/A"
+colnames(newtab) <- c("BRANCHES","CHR","START","END","BESTPOS","SCORE","ENSEMBL","HGNC")
+newtab[,6] <- round(as.numeric(unlist(newtab[,6])),3)
 newtab[,7][which(newtab[,7] == "")] <- "N/A"
+newtab[,8][which(newtab[,8] == "")] <- "N/A"
 newtab[,1] <- sapply(unlist(newtab[,1]),function(x){paste(strsplit(x,"_")[[1]][-1],collapse="-")})
 newtab <- newtab[order(newtab$SCORE,decreasing=TRUE),]
 return(newtab)
@@ -118,6 +122,7 @@ return(score)
 })
 sortedgenes <- cbind(allgenes[,3],allscores)
 sortedgenes <- sortedgenes[order(as.numeric(sortedgenes[,2]),decreasing=TRUE),]
+sortedgenes <- sortedgenes[ which( sortedgenes[,2] != "NA" & !is.na( sortedgenes[,2] ) ), ]
 return(sortedgenes)
 },mc.cores=corenum)
 names(allsorted) <- levels(melttab[,1])
