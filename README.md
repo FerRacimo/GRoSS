@@ -40,7 +40,7 @@ As a visual example of what GRoSS can do, here are two graphs showing -log10(p-v
 
 # Running GRoSS
 
-Here is an example line for generating the above results. The main R script is RunMultiBranch.R and it requires the user to specify:
+Here is an example line for generating the above results. The main R script is GRoSS.R and it requires the user to specify:
 - an input file (\*txt) specified with the -e option
 - a graph file describing the topology of the graph. This can be:
   * in the same format as the graph file that is used as input for qpGraph (Patterson et al. 2012) (note that the value of the fitted admixture weights must be correctly stated), specified with the -r option OR
@@ -56,7 +56,7 @@ gzip -c KG_popfile_chr22.txt.gz > KG_popfile_chr22.txt
 Then, run the program:
 
 ```
-Rscript RunMultiBranch.R -e KG_popfile_chr22.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.graph -o SNPstat_1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB_chr22.tsv
+Rscript GRoSS.R -e KG_popfile_chr22.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.graph -o SNPstat_1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB_chr22.tsv
 ```
 
 The output contains the chi-squared statistics and the corresponding p-values for each branch of the admixture graph.
