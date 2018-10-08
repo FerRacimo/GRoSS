@@ -3,8 +3,7 @@ print("Loading graph topology")
 if(is.null(dotfile)){ print("Reading *graph file"); pregraph <- readr::read_file(graphfile); graph <- graphparse::read_qpgraph(pregraph)
 } else { print("Reading *dot file"); pregraph <- readr::read_file(dotfile); graph <- graphparse::read_dot(pregraph) }
 vecadm <- attr(graph, "admixture_proportions")
-if(is.null(vecadm)){ admvalues <- c() } else{ 
-	admvalues <- cbind(names(vecadm),matrix(vecadm))}
+admvalues <- cbind(names(vecadm),matrix(vecadm))
 leaves <- graph$leaves
 inner_nodes <- graph$inner_nodes
 edges <- sapply(c(leaves,inner_nodes), function(x){get_edges(graph, x)})
@@ -34,30 +33,38 @@ if(exists("neutfile")){
   neutdata <- LoadCounts(neutfilename, leaves)
   firstfreqcol <- 4
   neut_leaves_counts <- as.data.frame(neutdata[,seq(firstfreqcol,dim(neutdata)[2])])
-  neut_leaves_freqs <- ObtainFreqs(neut_leaves_counts)
+  fcutoff <- 0.01
+  raw_freqs <- ObtainFreqs(neut_leaves_counts,fcutoff)
+  neut_leaves_freqs <- raw_freqs[[1]]
+  checksegneut <- raw_freqs[[2]]
   snpinfo <- neutdata[,c(1,2,3)]
-
+  snpinfo <- snpinfo[checksegneut,]
+  
   # Deconstruct graph
   graphedges <- supergraph[[2]]
   deconsgraph <- DeconstructGraph(supergraph)
   leaves <- supergraph[[1]]$leaves
 
-  # Compute empirical covariance matrix
+  # Filter for segregating sites
   print("Computing F matrix...")
-  fcutoff <- 0.01
-  checksegneut <- which( apply(neut_leaves_freqs,1,sum)/dim(neut_leaves_freqs)[2] < (1 - fcutoff)  & apply(neut_leaves_freqs,1,sum)/dim(neut_leaves_freqs)[2] > fcutoff )
+  #checksegneut <- which( apply(neut_leaves_freqs,1,sum)/dim(neut_leaves_freqs)[2] < (1 - fcutoff)  & apply(neut_leaves_freqs,1,sum)/dim(neut_leaves_freqs)[2] > fcutoff )
   #print(checksegneut)
-  neut_leaves_freqs <- neut_leaves_freqs[checksegneut,]
-  neut_leaves_freqs_means <- apply(neut_leaves_freqs, 1, mean)	
+  #neut_leaves_freqs <- neut_leaves_freqs[checksegneut,]
+
+
+  # Compute empirical covariance matrix
+  checkLG <- which(snpinfo[,1] != "LG01" & snpinfo[,1] != "LG02" & snpinfo[,1] != "LG12" & snpinfo[,1] != "LG07")
+  snpinfo_cov <- snpinfo[checkLG,]
+  neut_leaves_freqs_cov <- neut_leaves_freqs[checkLG,]
+  neut_leaves_freqs_means <- apply(neut_leaves_freqs_cov, 1, mean)	  
   mean_hetero <- neut_leaves_freqs_means*(1-neut_leaves_freqs_means)
-  snpinfo <- snpinfo[checksegneut,]
-  Fmat <- sapply(seq(1,dim(neut_leaves_freqs)[2]),function(x){
-       sapply(seq(1,dim(neut_leaves_freqs)[2]),function(y){
-	cov(neut_leaves_freqs[,x]/sqrt(mean_hetero), neut_leaves_freqs[,y]/sqrt(mean_hetero))
+  Fmat <- sapply(seq(1,dim(neut_leaves_freqs_cov)[2]),function(x){
+       sapply(seq(1,dim(neut_leaves_freqs_cov)[2]),function(y){
+	cov(neut_leaves_freqs_cov[,x]/sqrt(mean_hetero), neut_leaves_freqs_cov[,y]/sqrt(mean_hetero))
 	})
        })
-  colnames(Fmat) <- colnames(neut_leaves_freqs)
-  rownames(Fmat) <- colnames(neut_leaves_freqs)
+  colnames(Fmat) <- colnames(neut_leaves_freqs_cov)
+  rownames(Fmat) <- colnames(neut_leaves_freqs_cov)
   #print(Fmat)
 
   # Compute contributions of each branch to each leaf

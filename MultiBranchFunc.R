@@ -41,13 +41,16 @@ finaltab <- c()
 branches <- unique(tab$Branches)
 for(branch in branches){
 branchtab <- tab[which(tab$Branches == branch),]
+
 # Collapse overlapping regions
 branch <- as.character(branchtab$Branches[1])
-start <- branchtab$START - extend - padding
-stop <- branchtab$END + extend + padding
-pos <- round((branchtab$START + branchtab$END)/2)
-chrom <- branchtab$CHR
-score <- branchtab$Pvals
+begin <- as.numeric(as.character(branchtab$START))
+end <- as.numeric(as.character(branchtab$END))
+start <- begin - extend - padding
+stop <- end + extend + padding
+pos <- round((begin + end)/2)
+chrom <- as.character(branchtab$CHR)
+score <- as.numeric(as.character(branchtab$Pvals))
 my.df <- data.frame(chrom=chrom,start=start,stop=stop,pos=pos,score=score)
 DT <- as.data.table(my.df)
 DT[,group := { 
@@ -56,6 +59,7 @@ DT[,group := {
       },by=chrom]
 #collapsed <- DT[, list(start=min(start),stop=max(stop),chrom=unique(chrom),score=max(score)),by=list(group,chrom)]
 collapsed <- DT[, list( start=min(start),stop=max(stop),chrom=unique(chrom),score=max(score),bestsnp=pos[which( score == max(score) )] ),by=list(group,chrom)]
+#print(collapsed)
 # Remove padding
 #compressedtab <- cbind(rep(branch,length(collapsed$chrom)),as.character(collapsed$chrom),collapsed$start+padding,collapsed$stop-padding,collapsed$score)
 compressedtab <- cbind(rep(branch,length(collapsed$chrom)),as.character(collapsed$chrom),collapsed$start+padding,collapsed$stop-padding,collapsed$bestsnp,collapsed$score)
@@ -599,9 +603,16 @@ norm_vec <- function(x) sqrt(sum(x^2))
 
 
 
-ObtainFreqs <- function(countdat){
+ObtainFreqs <- function(countdat,fcutoff){
+  dercounts <- apply(countdat,c(1,2),function(x){splitted <- strsplit(x,",")[[1]]; return( as.numeric(splitted[2]) )})
+  totalcounts <- apply(countdat,c(1,2),function(x){splitted <- strsplit(x,",")[[1]]; return( as.numeric(splitted[2])+as.numeric(splitted[1]) )})
+  dersum <- apply(dercounts,1,function(x){sum(x)})
+  totalsum <- apply(totalcounts,1,function(x){sum(x)})
+  totalfreq <- dersum/totalsum
   freqs <- apply(countdat,c(1,2),function(x){splitted <- strsplit(x,",")[[1]]; return( as.numeric(splitted[2]) / (as.numeric(splitted[2])+as.numeric(splitted[1])) )})
-  return(as.matrix(freqs))
+  checksegneut <- which(totalfreq > fcutoff & totalfreq < (1-fcutoff) ) 
+  freqs <- freqs[checksegneut,]
+  return( list( as.matrix(freqs), checksegneut ) )
 }
 
 # Trim out white space
