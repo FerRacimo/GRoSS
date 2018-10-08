@@ -3,7 +3,8 @@ print("Loading graph topology")
 if(is.null(dotfile)){ print("Reading *graph file"); pregraph <- readr::read_file(graphfile); graph <- graphparse::read_qpgraph(pregraph)
 } else { print("Reading *dot file"); pregraph <- readr::read_file(dotfile); graph <- graphparse::read_dot(pregraph) }
 vecadm <- attr(graph, "admixture_proportions")
-admvalues <- cbind(names(vecadm),matrix(vecadm))
+if(is.null(vecadm)){ admvalues <- c() } else{ 
+	admvalues <- cbind(names(vecadm),matrix(vecadm))}
 leaves <- graph$leaves
 inner_nodes <- graph$inner_nodes
 edges <- sapply(c(leaves,inner_nodes), function(x){get_edges(graph, x)})
