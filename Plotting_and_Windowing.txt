@@ -2,8 +2,7 @@ R
 library("ggplot2")
 library("reshape")
 
-#popnames <- "1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB"
-popnames <- "LAZ_Mandenka_Yoruba_Oceanian_EastAsian_NativeAmerican_Sardinian_EuropeA"
+popnames <- "1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB"
 
 table <- read.table(paste("SNPstat_",popnames,".tsv",sep=""),header=TRUE,nrows=1000000)
 table <- as.data.frame(table)
