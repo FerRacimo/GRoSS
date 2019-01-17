@@ -99,7 +99,7 @@ return(newtab)
 }
 
 # Function to sort genes for ontology analysis
-GetSortedGenes <- function(melttab,hostname,datasetname,corenum,maxormean){
+GetSortedGenes <- function(melttab,hostname,datasetname,corenum,maxormean,extension=0){
 ensembl = useEnsembl(host=hostname,biomart="ensembl", dataset=datasetname)
 allgenes <- getBM(attributes=c('ensembl_gene_id','gene_biotype','hgnc_symbol','chromosome_name','start_position','end_position'), mart = ensembl)
 allgenes <- allgenes[which(allgenes[,2] == "protein_coding" & allgenes[,3] != "" &  allgenes[,4] %in% c("X","Y",seq(1,22)) ),]
@@ -110,15 +110,15 @@ print(branch)
 branchtab <- melttab[which(melttab[,1] == branch),]
 allscores <- apply(allgenes,1,function(gene){
 genechr <- as.character(gene[4])
-genestart <- as.numeric(gene[5])
-geneend <- as.numeric(gene[6])
+genestart <- as.numeric(gene[5]) - extension
+geneend <- as.numeric(gene[6]) + extension
 winchr <- branchtab[,4]
 winstart <- branchtab[,5] 
 winend <- branchtab[,6]
-overlapwin <- which(winchr == genechr &
-(winstart <= genestart & winend >= genestart ) |
+overlapwin <- which( as.character(winchr) == as.character(genechr) &
+((winstart <= genestart & winend >= genestart ) |
 (winstart >= genestart & winend <= geneend ) |
-(winstart <= geneend & winend >= geneend)
+(winstart <= geneend & winend >= geneend))
 )
 if(maxormean == "max"){ if(length(overlapwin) == 0){score <- NA } else{ score <- max(branchtab[overlapwin,2],na.rm=TRUE)} } else {
 if(length(overlapwin) == 0){score <- NA } else{ score <- mean(branchtab[overlapwin,2],na.rm=TRUE)} }
@@ -764,16 +764,35 @@ ChiSquaredReduced <- function(graphedges,contribmat,Fmat,leaves_freqs,effects,to
 }
 
 
+ComputeMeanFreq <- function(freqs,invFmat,mode){
+if(mode == "A"){
+	# Simple mean
+	return(mean(freqs))
+} else{
+	# F-weighted mean
+	#print(freqs)
+	ones <- rep(1,length(freqs))
+	numerator <- t(ones) %*% invFmat %*% freqs
+	#print(numerator)
+	denominator <- t(ones) %*% invFmat %*% ones
+	#print(denominator)
+	#print(numerator / denominator)
+	Fmean <- c(numerator / denominator)
+	Fmean <- min(max(Fmean,0.05),0.95)
+	return(Fmean)
+}
+}
 
 
 
-ComputeWinRB <- function(branchorder,contribmat,Fmat,freqs){
+ComputeWinRB <- function(branchorder,contribmat,Fmat,invFmat,freqs){
 
   contribmat <- contribmat[,colnames(Fmat)]
 
   if( is.null(dim(freqs)) ){
     freqs <- freqs[colnames(Fmat)]
-    ancfreqs <- mean(freqs)
+    ancfreqs <- ComputeMeanFreq(freqs,1,"A")
+    #ancfreqs <- ComputeMeanFreq(freqs,invFmat,"B")
     freqs <- freqs - ancfreqs
     anchet <- ancfreqs*(1-ancfreqs)
     sumfreqs <- freqs
