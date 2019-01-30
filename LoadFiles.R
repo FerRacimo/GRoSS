@@ -54,7 +54,7 @@ if(exists("neutfile")){
 
 
   # Compute empirical covariance matrix
-  checkLG <- which(snpinfo[,1] != "LG01" & snpinfo[,1] != "LG02" & snpinfo[,1] != "LG12" & snpinfo[,1] != "LG07")
+  #checkLG <- which(snpinfo[,1] != "LG01" & snpinfo[,1] != "LG02" & snpinfo[,1] != "LG12" & snpinfo[,1] != "LG07")
   snpinfo_cov <- snpinfo[checkLG,]
   neut_leaves_freqs_cov <- neut_leaves_freqs[checkLG,]
   neut_leaves_freqs_means <- apply(neut_leaves_freqs_cov, 1, mean)	  
