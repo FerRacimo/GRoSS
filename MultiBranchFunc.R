@@ -791,7 +791,7 @@ ComputeWinRB <- function(branchorder,contribmat,Fmat,invFmat,freqs){
 
   if( is.null(dim(freqs)) ){
     freqs <- freqs[colnames(Fmat)]
-    ancfreqs <- ComputeMeanFreq(freqs,1,"A")
+    ancfreqs <- ComputeMeanFreq(freqs,invFmat,"A")
     #ancfreqs <- ComputeMeanFreq(freqs,invFmat,"B")
     freqs <- freqs - ancfreqs
     anchet <- ancfreqs*(1-ancfreqs)
