@@ -627,6 +627,8 @@ LoadCounts <- function(filename,pops){
   table <- table[,tokeep]
   table[,1] <- trim(table[,1])
   table[,2] <- trim(table[,2])
+  noNA <- which(apply(table, 1, function(line){ !("0,0" %in% line) }))
+  table <- table[noNA,]
   return(table)
 }
 
