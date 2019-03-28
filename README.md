@@ -42,7 +42,8 @@ Here is an example line for generating the above results. The main R script is G
   * Note: GRoSS will ignore any line where one or more population panels have missing data ("0,0").
 - a graph file describing the topology of the graph. This can be:
   * in the same format as the graph file that is used as input for qpGraph (Patterson et al. 2012) (note that the value of the fitted admixture weights must be correctly stated), specified with the -r option OR
-  * in dotfile format (outputted from qpGraph after fitting), specified with the -d option 
+  * in dotfile format (outputted from qpGraph after fitting), specified with the -d option
+  NOTE: do not add comments (lines starting with "#") to either of these files
 - an output file on which to write the results, specified with the -o option
 
 We will use the same 1000 Genomes populations as in the example above, but limiting ourselves to chr22. First, unpack the input file KG_popfile_chr22.txt.gz.
