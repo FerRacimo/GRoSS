@@ -39,7 +39,7 @@ As a visual example of what GRoSS can do, here are two graphs showing -log10(p-v
 
 Here is an example line for generating the above results. The main R script is GRoSS.R and it requires the user to specify:
 - an input file (\*txt) specified with the -e option
-  * The first column of this file is the chromosome name, the second column is the position, the third column is a SNP ID identifier (can just be equal to "[chromosome]-[position]" if no SNP id is available) and all the other columns contain the number of reference and alternative alleles in each population, separated by a comma (e.g. 5,8 if there are 5 reference alleles and 8 alternative alleles in a given population).
+  * The first column of this file is the chromosome name, the second column is the position, the third column is a SNP ID identifier. The identifier can just be equal to "[chromosome]-[position]" if no SNP id is available, but it must be unique to each SNP. All the other columns contain the number of reference and alternative alleles in each population, separated by a comma (e.g. 5,8 if there are 5 reference alleles and 8 alternative alleles in a given population at a given SNP).
   * NOTE: GRoSS will ignore any line where one or more population panels have missing data ("0,0").
 - a graph file describing the topology of the graph. This can be:
   * in the same format as the graph file that is used as input for qpGraph (Patterson et al. 2012) (note that the value of the fitted admixture weights must be correctly stated), specified with the -r option OR
