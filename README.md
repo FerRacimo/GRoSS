@@ -24,7 +24,6 @@ install.packages("qqman")
 install.packages("optparse")
 devtools::install_bitbucket('coolbutuseless/minilexer')
 devtools::install_github("mailund/graphparse")
-devtools::install_github("mailund/matchbox")
 source("https://bioconductor.org/biocLite.R"); biocLite("biomaRt")
 ```
 
