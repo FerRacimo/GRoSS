@@ -10,7 +10,6 @@ suppressMessages(require("ggplot2"))
 suppressMessages(require("parallel"))
 suppressMessages(require("readr"))
 suppressMessages(require("graphparse"))
-suppressMessages(require("matchbox"))
 suppressMessages(require("minilexer"))
 
 suppressMessages(require(IRanges))
