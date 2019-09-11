@@ -3,8 +3,10 @@ Graph-aware Retrieval of Selective Sweeps
 
 Here, I introduce a method to detect selective sweeps across the genome, when using many populations that are related via a complex admixture graph. I made some slight modifications to the Q<sub>B</sub> statistic from Racimo, Berg and Pickrell (2018) which was originally meant to detect polygenic adaptation using admixture graphs (see https://github.com/FerRacimo/PolyGraph). The new statistic - which I call S<sub>B</sub> - does not need GWAS data and works with allele frequency data alone. It can be used to **both scan the genome for regions under strong single-locus positive selection, and pinpoint where in the graph the selective event most likely took place.** See the file detecting-single-locus.pdf for an explanation of how the statistic works.
 
-If you end up using it, please cite the following preprint:
-https://www.biorxiv.org/content/early/2018/10/25/453092
+If you end up using it, please cite the following paper: https://genome.cshlp.org/content/29/9/1506
+Free preprint version: https://www.biorxiv.org/content/early/2018/10/25/453092
+
+
 
 # Required R Libraries
 
