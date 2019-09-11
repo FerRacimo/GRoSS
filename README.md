@@ -5,7 +5,7 @@ Here, I introduce a method to detect selective sweeps across the genome, when us
 
 If you end up using it, please cite the following paper: https://genome.cshlp.org/content/29/9/1506
 
-Free preprint version: https://www.biorxiv.org/content/early/2018/10/25/453092
+Free preprint version: https://www.biorxiv.org/content/10.1101/453092v2
 
 
 
