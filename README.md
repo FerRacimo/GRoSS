@@ -63,4 +63,4 @@ Rscript GRoSS.R -e KG_popfile_chr22.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.graph
 
 The output contains the chi-squared statistics and the corresponding p-values for each branch of the admixture graph.
 
-The Plotting_and_Windowing.txt file contains some R commands to merge SNPs into windows and plot the output.
+The Plotting_and_Windowing.txt file contains some R commands to optionally merge SNPs into windows and plot the output.
