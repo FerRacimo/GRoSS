@@ -70,4 +70,4 @@ For an example of how to create a graph file with admixture, see: https://github
 
 # A guide for converting a VCF file into a GRoSS input file
 
-If you have a VCF file and would like to convert it to a GRoSS input file (e.g. as in KG_popfile_chr22.txt), then you can use this handy guide created by Gabriel Renaud: https://github.com/FerRacimo/VCFtoGRoSS.md
+If you have a VCF file and would like to convert it to a GRoSS input file (e.g. as in KG_popfile_chr22.txt), then you can use this handy guide created by Gabriel Renaud: https://github.com/FerRacimo/GRoSS/blob/master/VCFtoGRoSS.md
