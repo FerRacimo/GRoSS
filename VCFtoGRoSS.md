@@ -51,7 +51,7 @@ In order to run GRoSS, we need a population tree or graph. Here's a simple tree 
     EASIA -> EAS [ ] ;
     } " > treeGross.dot;
 
-<img src="https://github.com/FerRacimo/GRoSS/blob/master/treeGross.png" height="800">
+<img src="https://github.com/FerRacimo/GRoSS/blob/master/treeGross.png" height="300">
 
 
 We simply need to execute GRoSS on the allele counts and the tree we have previously created (assuming the folder where GRoSS is downloaded is in ~/path_to_gross/):
@@ -77,4 +77,4 @@ European branch:
 
 The following shows the peak of p-values around the locus where positive selection is thought to have occurred.
 
-<img src="https://github.com/FerRacimo/GRoSS/blob/master/pvalEUR.png" height="800">
+<img src="https://github.com/FerRacimo/GRoSS/blob/master/pvalEUR.png" height="300">
