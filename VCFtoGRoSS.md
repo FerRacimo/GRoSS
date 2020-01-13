@@ -11,10 +11,9 @@ First, we need to inform glactools about the names and length of the different c
 In order to merge individuals from the same continent we will use the following panel information:
 
      wget https://personal.broadinstitute.org/armartin/ginger/integrated_call_samples_v3.20130502.ALL.panel.txt
-     grep -v ^sample integrated_call_samples_v3.20130502.ALL.panel.txt  |cut -f 1,3  > panel.txt
+     grep -v ^sample integrated_call_samples_v3.20130502.ALL.panel.txt  | cut -f 1,3  > panel.txt
 
-The panel file contains a column that details the ID of the individual
-and a second column with the population of origin:
+The panel file contains a column that details the ID of the individual and a second column with the population of origin:
 
      head -n 5 panel.txt
      HG00096 EUR
@@ -37,14 +36,9 @@ We will then convert the VCF file into input for GRoSS:
 
      tabix -h ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr2.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz 2:136486829-136653337  |glactools vcfm2acf --onlyGT --fai human_g1k_v37.fasta.fai  -  |glactools meld -f panel.txt -  | glactools acf2gross --noroot -  |gzip > input.gross.gz
 
-The first command uses tabix to retrieve a specific region with the
-lactase gene.  The second command converts the VCF file into ACF.  The
-third command merges the different individuals from different
-super-populations together as to get an allele count per population.
-Finally, the fourth command takes this ACF file and converts into
-input for GRoSS.
+The first command uses tabix to retrieve a specific region with the lactase gene (we only need to do this if we are interested in a particular region of the genome, one would normally use the entire genome without filtering a priori for a particular region). The second command converts the VCF file into ACF.  The third command merges the different individuals from different super-populations together so as to get an allele count per population. Finally, the fourth command takes this ACF file and converts into input for GRoSS.
 
-In order to run gross,  we need a population tree:
+In order to run GRoSS, we need a population tree or graph. Here's a simple tree relating our populations:
 
     echo -e "digraph G {
     R -> AFR [ ] ;
@@ -58,14 +52,11 @@ In order to run gross,  we need a population tree:
     } " > treeGross.dot;
 
 
-We simply need to execute GRoSS on the allele counts and the tree we
-have previously created:
+We simply need to execute GRoSS on the allele counts and the tree we have previously created (assuming the folder where GRoSS is downloaded is in ~/path_to_gross/):
 
      prevdir=`pwd`
-     cd ~/path to gross/GRoSS/
-     Rscript ~/path to gross/GRoSS/GRoSS.R -d $prevdir/tree.dot -e
-$prevdir/input.gross.gz -o /dev/stdout |grep -v "^\[" |bgzip -c >
-$prevdir/output.gross.gz
+     cd ~/path_to_gross/GRoSS/
+     Rscript ~/path_to_gross/GRoSS/GRoSS.R -d $prevdir/tree.dot -e $prevdir/input.gross.gz -o /dev/stdout |grep -v "^\[" |bgzip -c > $prevdir/output.gross.gz
      cd -
 
 The file:
@@ -82,5 +73,4 @@ European branch:
     pdf("pvalEUR.pdf")
     plot(data$START,-1*log(data$Pval_EUR_EURASIA),xlab="position",ylab="-log(P-value EUR)",main="P-value EUR per position",pch=18,col="darkblue"); dev.off();
 
-The following shows the peak of p-values around the locus where
-selection occurred.
+The following shows the peak of p-values around the locus where positive selection is thought to have occurred.
