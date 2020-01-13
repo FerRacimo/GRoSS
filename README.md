@@ -66,3 +66,8 @@ The output contains the chi-squared statistics and the corresponding p-values fo
 The Plotting_and_Windowing.txt file contains some R commands to optionally merge SNPs into windows and plot the output.
 
 For an example of how to create a graph file with admixture, see: https://github.com/DReichLab/AdmixTools/blob/master/examples.qpGraph/gr1x
+
+
+# A guide for converting a VCF file into a GRoSS input file
+
+If you have a VCF file and would like to convert it to a GRoSS input file (e.g. as in KG_popfile_chr22.txt), then you can use this handy guide created by Gabriel Renaud: https://github.com/FerRacimo/VCFtoGRoSS.md
