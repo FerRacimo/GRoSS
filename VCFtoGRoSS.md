@@ -1,4 +1,5 @@
 # Converting a VCF file to a GRoSS input file
+By Gabriel Renaud
 
 The goal of this section is to show how to convert a multi-individual VCF file into GRoSS input data using [glactools](https://grenaud.github.io/glactools/).  We will replicate a signal of selection on the lactase genes in Europeans
 using the 1000 genomes data. To simplify the analysis, we will use the super population panels: Africans (AFR), Europeans (EUR), East Asians (EAS), South Asians (SAS) and Amerindian (AMR).
@@ -79,9 +80,7 @@ European branch:
     data <- read.table("EUR.gz",header=TRUE,stringsAsFactors=FALSE);
 
     pdf("pvalEUR.pdf")
-    plot(data$START,-1*log(data$Pval_EUR_EURASIA),xlab="position",ylab="-log(P-value
-EUR)",main="P-value EUR per position",pch=18,col="darkblue");
-    dev.off();
+    plot(data$START,-1*log(data$Pval_EUR_EURASIA),xlab="position",ylab="-log(P-value EUR)",main="P-value EUR per position",pch=18,col="darkblue"); dev.off();
 
 The following shows the peak of p-values around the locus where
 selection occurred.
