@@ -34,7 +34,7 @@ if(exists("neutfile")){
   neutdata <- LoadCounts(neutfilename, leaves)
   firstfreqcol <- 4
   neut_leaves_counts <- as.data.frame(neutdata[,seq(firstfreqcol,dim(neutdata)[2])])
-  fcutoff <- 0.01
+  fcutoff <- 0.05
   raw_freqs <- ObtainFreqs(neut_leaves_counts,fcutoff)
   neut_leaves_freqs <- raw_freqs[[1]]
   checksegneut <- raw_freqs[[2]]
