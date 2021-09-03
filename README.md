@@ -28,6 +28,9 @@ install.packages("admixturegraph",repos=unique(c(getOption("repos"),repos="https
 devtools::install_bitbucket('coolbutuseless/minilexer')
 devtools::install_github("mailund/graphparse")
 source("https://bioconductor.org/biocLite.R"); biocLite("biomaRt")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("biomaRt"))
 ```
 
 # Examples
