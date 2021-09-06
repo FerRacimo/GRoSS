@@ -38,6 +38,7 @@ if(exists("neutfile")){
   raw_freqs <- ObtainFreqs(neut_leaves_counts,fcutoff)
   neut_leaves_freqs <- raw_freqs[[1]]
   checksegneut <- raw_freqs[[2]]
+  leaves_finalcounts <- raw_freqs[[3]]
   snpinfo <- neutdata[,c(1,2,3)]
   snpinfo <- snpinfo[checksegneut,]
   
@@ -101,6 +102,7 @@ if(exists("neutfile")){
     chrset <- which(snpinfo[,1] == chr)
     setsnpinfo <- snpinfo[chrset,]
     setfreqs <- neut_leaves_freqs[chrset,]
+    setcounts <- leaves_finalcounts[chrset,]
 
     numSNPs <- dim(setfreqs)[1]
 
@@ -116,8 +118,10 @@ if(exists("neutfile")){
     #print(c(x,x+(winsize-1)))
     SNPs <- seq(x,x+(winsize-1),1)
     freqs <- setfreqs[SNPs,]
-    #print(freqs)	
-    stats <- ComputeWinRB(branchorder,contribmat,Fmat,invFmat,freqs)
+    totcounts <- setcounts[SNPs,]
+    print(freqs)
+    print(totcounts)
+    stats <- ComputeWinRB(branchorder,contribmat,Fmat,invFmat,freqs,finitesamp,totcounts)
     return(stats)
     } ))
 

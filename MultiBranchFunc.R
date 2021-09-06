@@ -610,8 +610,12 @@ ObtainFreqs <- function(countdat,fcutoff){
   totalfreq <- dersum/totalsum
   freqs <- apply(countdat,c(1,2),function(x){splitted <- strsplit(x,",")[[1]]; return( as.numeric(splitted[2]) / (as.numeric(splitted[2])+as.numeric(splitted[1])) )})
   checksegneut <- which(totalfreq > fcutoff & totalfreq < (1-fcutoff) ) 
-  freqs <- freqs[checksegneut,]
-  return( list( as.matrix(freqs), checksegneut ) )
+  retfreqs <- freqs[checksegneut,]
+  retcounts <- totalcounts[checksegneut,]
+  #print(dim(retfreqs))
+  #print(dim(retcounts))
+  #print(retcounts)
+  return( list( as.matrix(retfreqs), checksegneut, as.matrix(retcounts) ) )
 }
 
 # Trim out white space
@@ -786,20 +790,22 @@ if(mode == "A"){
 
 
 
-ComputeWinRB <- function(branchorder,contribmat,Fmat,invFmat,freqs){
+ComputeWinRB <- function(branchorder,contribmat,Fmat,invFmat,freqs,finitesamp=FALSE,totcounts){
 
   contribmat <- contribmat[,colnames(Fmat)]
 
   if( is.null(dim(freqs)) ){
-    freqs <- freqs[colnames(Fmat)]
-    ancfreqs <- ComputeMeanFreq(freqs,invFmat,"A")
-    #ancfreqs <- ComputeMeanFreq(freqs,invFmat,"B")
-    freqs <- freqs - ancfreqs
+    rawfreqs <- freqs[colnames(Fmat)]
+    totcounts <- totcounts[colnames(Fmat)]
+    ancfreqs <- ComputeMeanFreq(rawfreqs,invFmat,"A")
+    #ancfreqs <- ComputeMeanFreq(rawfreqs,invFmat,"B")
+    freqs <- rawfreqs - ancfreqs
     anchet <- ancfreqs*(1-ancfreqs)
     sumfreqs <- freqs
 
   } else{
     freqs <- freqs[,colnames(Fmat)]
+    totcounts <- totcounts[,colnames(Fmat)]
     ancfreqs <- apply(freqs,1,mean)
     freqs <- freqs - ancfreqs
     anchet <- ancfreqs*(1-ancfreqs)
@@ -813,23 +819,34 @@ ComputeWinRB <- function(branchorder,contribmat,Fmat,invFmat,freqs){
   #print(anchet)
   #print(sumfreqs)  
 
+  pophets <- rawfreqs*(1-rawfreqs) / (totcounts)
+  pophetsdiag <- diag(pophets)
+
   sumanchet <- sum(anchet)
 
-
-  teststat <- apply(contribmat,1, function(x){
-    #print(varmean)
-    lambda <- sumanchet * (t(x) %*% Fmat %*% x)
-    numerator <- (sumfreqs %*% x)^2
-    final <- numerator / (lambda)
-    return(final)
-  } )
+  if(finitesamp == FALSE){
+    teststat <- apply(contribmat,1, function(x){
+      #print(varmean)
+      lambda <- sumanchet * (t(x) %*% Fmat %*% x)
+      denominator <- lambda
+      numerator <- (sumfreqs %*% x)^2
+      final <- numerator / (denominator)
+      return(final)
+     } )
+  } else{
+    teststat <- apply(contribmat,1, function(x){
+      #print(varmean)
+      lambda <- sumanchet * (t(x) %*% Fmat %*% x)
+      denominator <- lambda + (t(x) %*% pophetsdiag %*% x)
+      numerator <- (sumfreqs %*% x)^2
+      final <- numerator / (denominator)
+      return(final)
+     } )
+  }
 
   teststat <- teststat[branchorder]
-
   Pval <- sapply( teststat, function(y){ max( 1.110223e-16, 1 - pchisq(y,1)) })
-
   names(Pval) <- paste("Pval_",names(teststat),sep="")
-
   return(c(teststat,Pval))
 }
 
@@ -841,5 +858,3 @@ if(length(parents) == 0){ return()
 } else if(length(parents) == 1){ return(c(node_name,parents))
 } else if(length(parents) > 1){ return( rbind( rep(node_name,length(parents)) ,parents)  ) }
 }
-
-
