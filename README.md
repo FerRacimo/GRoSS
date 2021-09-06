@@ -20,14 +20,17 @@ install.packages("parallel")
 install.packages("data.table")
 install.packages("ggplot2")
 install.packages("gridExtra")
-install.packages("admixturegraph")
 install.packages("devtools")
 install.packages("readr")
 install.packages("qqman")
 install.packages("optparse")
+install.packages("admixturegraph",repos=unique(c(getOption("repos"),repos="https://cran.microsoft.com/snapshot/2019-04-01/")))
 devtools::install_bitbucket('coolbutuseless/minilexer')
 devtools::install_github("mailund/graphparse")
 source("https://bioconductor.org/biocLite.R"); biocLite("biomaRt")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("biomaRt"))
 ```
 
 # Examples
