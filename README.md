@@ -74,9 +74,9 @@ For an example of how to create a graph file with admixture, see: https://github
 
 If you have a VCF file and would like to convert it to a GRoSS input file (e.g. as in KG_popfile_chr22.txt), then you can use this handy guide created by Gabriel Renaud: https://github.com/FerRacimo/GRoSS/blob/master/VCFtoGRoSS.md
 
-# New (untested) feature: correction for low sample sizes
+# New feature: correction for low sample sizes
 
-We've recently implemented a modified of the Q_S statistic for cases of low sample sizes. It uses a Normal approimation to the binomial distribution that accounts for the increased variance in sample allele frequencies, relative to population allele frequencies, as a consequence of finite sample sizes. It can be run by using the "-s" option:
+We've recently implemented a modified of the Q_S statistic for cases of low sample sizes. It uses a Normal approximation to the binomial distribution that accounts for the increased variance in sample allele frequencies, relative to population allele frequencies, as a consequence of finite sample sizes. We recommend to use this when the number of (diploid) individuals in at least one of the populations is less than 20. It can be run by using the "-s" option:
 
 ```
 Rscript GRoSS.R -e KG_popfile_chr22.txt -r 1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB.graph -o SNPstat_1KG_MSL_ESN_CDX_JPT_CEU_TSI_CHB_chr22.tsv -s
