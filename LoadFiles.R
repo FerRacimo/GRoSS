@@ -119,8 +119,8 @@ if(exists("neutfile")){
     SNPs <- seq(x,x+(winsize-1),1)
     freqs <- setfreqs[SNPs,]
     totcounts <- setcounts[SNPs,]
-    print(freqs)
-    print(totcounts)
+    #print(freqs)
+    #print(totcounts)
     stats <- ComputeWinRB(branchorder,contribmat,Fmat,invFmat,freqs,finitesamp,totcounts)
     return(stats)
     } ))
