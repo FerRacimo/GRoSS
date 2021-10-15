@@ -76,7 +76,7 @@ If you have a VCF file and would like to convert it to a GRoSS input file (e.g. 
 
 # New feature: correction for low sample sizes
 
-We've recently implemented a modified of the Q_S statistic for cases of low sample sizes. A full description of it can be found here: https://github.com/FerRacimo/GRoSS/blob/1c28b48adca72396c58c70e9084090772ecfa36f/GRoSS_low_sample_size.pdf
+We've recently implemented a modified of the Q_S statistic for cases of low sample sizes. A full description of it can be found here[https://github.com/FerRacimo/GRoSS/blob/1c28b48adca72396c58c70e9084090772ecfa36f/GRoSS_low_sample_size.pdf]
 The modified statistic uses a Normal approximation to the binomial distribution that accounts for the increased variance in sample allele frequencies, relative to population allele frequencies, as a consequence of finite sample sizes. We recommend the use of this feature over the "vanilla" version of GRoSS, especially when the number of (diploid) individuals in at least one of the populations is less than 20. It can be run by using the "-s" option:
 
 ```
